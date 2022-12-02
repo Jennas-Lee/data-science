@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Amazon Polly</title>
+</head>
+<body>
+<h1>Amazon Polly Test</h1>
+<form id="polly-form">
+    <textarea name="polly-text" id="polly-text" cols="30" rows="10"></textarea>
+    <button type="submit">Submit</button>
+</form>
+<script>
+    document.getElementById('polly-form').addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        let data = {'polly-text': document.getElementById('polly-text').value};
+        console.log(data);
+
+        let audio = new Audio();
+        audio.src = '/';
+
+        const xhr = new XMLHttpRequest();
+
+        xhr.open('POST', '/', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.responseType = 'blob';
+
+        xhr.onload = (event) => {
+            let blob = new Blob([xhr.response], {type: 'audio/mp3'});
+            let objectUrl = URL.createObjectURL(blob);
+            audio.src = objectUrl;
+            audio.onload = (event) => {
+                URL.revokeObjectURL(objectUrl);
+            }
+            audio.play();
+        }
+
+        xhr.send(JSON.stringify(data));
+    });
+</script>
+</body>
+</html>
